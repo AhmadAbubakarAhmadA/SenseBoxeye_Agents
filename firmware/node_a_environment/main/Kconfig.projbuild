@@ -1,0 +1,27 @@
+menu "Node A configuration"
+
+    config NODE_A_WIFI_SSID
+        string "Wi-Fi SSID"
+        default "REPLACE_ME"
+
+    config NODE_A_WIFI_PASS
+        string "Wi-Fi password"
+        default "REPLACE_ME"
+
+    config NODE_A_MQTT_URI
+        string "MQTT broker URI"
+        default "mqtt://10.130.71.4:1883"
+
+    config NODE_A_MQTT_USER
+        string "MQTT username"
+        default "node_a"
+
+    config NODE_A_MQTT_PASS
+        string "MQTT password"
+        default ""
+
+    config NODE_A_SENSOR_ID
+        string "Sensor ID"
+        default "env_station_01"
+
+endmenu

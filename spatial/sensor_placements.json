@@ -1,0 +1,47 @@
+{
+  "coordinate_system": {
+    "origin": "SW corner of building, floor 1",
+    "units": "meters",
+    "x_axis": "East",
+    "y_axis": "North",
+    "z_axis": "Height above floor"
+  },
+  "rooms": {
+    "lab_b": {"nw": [2.0, 9.0], "se": [10.0, 3.0], "floor": 1},
+    "hallway": {"west": [10.0, 1.0], "east": [18.0, 1.0], "width_m": 2, "floor": 1}
+  },
+  "nodes": {
+    "node_a": {
+      "id": "env_station_01",
+      "hardware": "ESP32-S3 + SEN66 + BMX055",
+      "location": {"x": 6.0, "y": 6.0, "z": 1.2, "floor": 1},
+      "room": "lab_b",
+      "description": "Center of Lab B, shelf height"
+    },
+    "node_b": {
+      "id": "visual_observer_01",
+      "hardware": "ESP32-S3 + OV2640 + BMX055",
+      "location": {"x": 2.5, "y": 8.5, "z": 2.0, "floor": 1},
+      "room": "lab_b",
+      "heading_deg": 135,
+      "fov_deg": 66,
+      "description": "NW corner of Lab B, aimed at entry"
+    },
+    "node_c": {
+      "id": "door_sentinel_01",
+      "hardware": "ESP32-S3 + BMX055",
+      "location": {"x": 9.5, "y": 4.0, "z": 2.1, "floor": 1},
+      "room": "lab_b",
+      "description": "Door frame between Lab B and hallway"
+    },
+    "node_d": {
+      "id": "hallway_observer_01",
+      "hardware": "ESP32-S3 + OV2640 + BMX055",
+      "location": {"x": 12.0, "y": 1.0, "z": 2.0, "floor": 1},
+      "room": "hallway",
+      "heading_deg": 270,
+      "fov_deg": 66,
+      "description": "Hallway, aimed west toward Lab B door"
+    }
+  }
+}
