@@ -15,7 +15,7 @@ There are three layers:
 
 3. **MQTT broker** (EMQX, Docker). Receives everything. Retained messages mean the agent gets tool manifests immediately on connect, even if the nodes booted hours ago.
 
-4. **Python agent** (LlamaIndex + Anthropic Claude). `MQTTReader` subscribes in the background. On startup, `mcp_bridge.py` converts discovered tool manifests into LlamaIndex `FunctionTool` objects. `AgentWorkflow` handles the agentic loop — Claude decides which sensors to query, interprets the data, correlates across nodes, and responds.
+4. **Python agent** (LlamaIndex + Anthropic Claude). `MQTTReader` subscribes in the background. On startup, `mcp_bridge.py` converts discovered tool manifests into LlamaIndex `FunctionTool` objects. `AgentWorkflow` handles the agentic loop — LLM decides which sensors to query, interprets the data, correlates across nodes, and responds.
 
 # System Architecture
 
