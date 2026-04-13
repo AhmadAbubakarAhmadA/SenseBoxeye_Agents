@@ -17,6 +17,10 @@ There are three layers:
 
 4. **Python agent** (LlamaIndex + Anthropic Claude). `MQTTReader` subscribes in the background. On startup, `mcp_bridge.py` converts discovered tool manifests into LlamaIndex `FunctionTool` objects. `AgentWorkflow` handles the agentic loop — Claude decides which sensors to query, interprets the data, correlates across nodes, and responds.
 
+# System Architecture
+
+![System Architecture](tests/System_Arc.png)
+
 The key idea: spatial metadata (x, y, z coordinates, room, floor) is embedded directly in tool descriptions and every MQTT message. The LLM doesn't need hardcoded building knowledge — it discovers sensor locations through the same protocol it uses to discover sensor capabilities. Add a new ESP32 node, and the agent finds it automatically.
 
 ## Files
@@ -91,9 +95,5 @@ All nodes use the [senseBox Eye v1.4](https://sensebox.de/) — ESP32-S3-WROOM-1
 | D | hallway_observer_01 | Camera + IMU (planned) | (12.0, 1.0, 2.0) Hallway |
 
 Coordinates are local Cartesian meters, origin at SW corner of the building. X = East, Y = North, Z = height.
-
-# System Architecture
-
-![System Architecture](tests/System_Arc.png)
 
 # Design doc
