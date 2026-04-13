@@ -1,6 +1,6 @@
-# PSCOTI
+# SPATIAL-SENSE-AGENT 
 
-Pervasive Spatial Computing of Things with Intelligence.
+AUTONOMOUS SPATIAL REASONING FOR IOT SENSOR NETWORKS VIA LLM-DRIVEN MCP DISCOVER.
 
 An LLM agent that discovers IoT sensors over MQTT at runtime, calls them as tools, and reasons about the indoor space they're deployed in. Each ESP32 sensor node publishes a tool manifest (MCP-style) to the MQTT broker. The agent picks these up, wires them into LlamaIndex as `FunctionTool`s, and uses Claude's native tool_use to query real sensor data on demand. Output is natural language spatial analysis + GeoJSON.
 
@@ -80,7 +80,7 @@ You> /quit
 
 ## Hardware
 
-All nodes use the [senseBox Eye v1.4](https://sensebox.de/) — ESP32-S3-WROOM-1, 8 MB flash, OctalSPI PSRAM, QWIIC I2C on GPIO2/GPIO1, onboard ICM-20948 IMU. Two of the four boards have OV2640 cameras (Nodes B and D, not yet deployed).
+All nodes use the [senseBox Eye v1.4](https://sensebox.de/) — ESP32-S3-WROOM-1, 8 MB flash, OctalSPI PSRAM, QWIIC I2C on GPIO2/GPIO1, onboard ICM-20948 IMU. Two of the four boards have OV2640 cameras.
 
 | Node | Sensor ID | What it does | Position |
 |------|-----------|-------------|----------|
@@ -93,4 +93,4 @@ Coordinates are local Cartesian meters, origin at SW corner of the building. X =
 
 ## Design doc
 
-The full specification (architecture, MCP schemas, reasoning patterns, GeoJSON format, build plan, references) is in [`examples/SpatialSenseAgent_README.md`](examples/SpatialSenseAgent_README.md).
+
