@@ -8,13 +8,14 @@ An LLM agent that discovers IoT sensors over MQTT at runtime, calls them as tool
 
 There are three layers:
 
-1. **Sensor nodes** (ESP32-S3, ESP-IDF C firmware). Each node reads its sensor(s), connects to Wi-Fi, and publishes two things to MQTT: (a) a retained JSON tool manifest on `sensors/<id>/tools` describing what it can do, and (b) periodic data on `sensors/<id>/data`. Currently two nodes are live:
-   - **Node A** — SEN66 air quality sensor (CO2, temperature, humidity, VOC, NOx, PM) + ICM-20948 IMU, at the center of Lab B
+1. **Sensor nodes** (ESP32-S3, ESP-IDF C firmware). Each node reads its sensor(s), connects to Wi-Fi, and publishes two things to MQTT: (a) a retained JSON tool manifest on `sensors/<id>/tools` describing what it can do, and (b) periodic data on `sensors/<id>/data`. Currently three nodes are live:
+   - **Node A** — SEN66 air quality sensor (CO2, temperature, humidity, VOC, NOx, PM) + ICM-20948 IMU, at the center of Room
+   - **Node B** —  OV2640 camera + ICM-20948 IMU at the NW corner of Room, aimed at the entry for visual scene observation
    - **Node C** — ICM-20948 IMU on the door frame, detecting open/close via vibration spikes
 
-2. **MQTT broker** (EMQX, Docker). Receives everything. Retained messages mean the agent gets tool manifests immediately on connect, even if the nodes booted hours ago.
+3. **MQTT broker** (EMQX, Docker). Receives everything. Retained messages mean the agent gets tool manifests immediately on connect, even if the nodes booted hours ago.
 
-3. **Python agent** (LlamaIndex + Anthropic Claude). `MQTTReader` subscribes in the background. On startup, `mcp_bridge.py` converts discovered tool manifests into LlamaIndex `FunctionTool` objects. `AgentWorkflow` handles the agentic loop — Claude decides which sensors to query, interprets the data, correlates across nodes, and responds.
+4. **Python agent** (LlamaIndex + Anthropic Claude). `MQTTReader` subscribes in the background. On startup, `mcp_bridge.py` converts discovered tool manifests into LlamaIndex `FunctionTool` objects. `AgentWorkflow` handles the agentic loop — Claude decides which sensors to query, interprets the data, correlates across nodes, and responds.
 
 The key idea: spatial metadata (x, y, z coordinates, room, floor) is embedded directly in tool descriptions and every MQTT message. The LLM doesn't need hardcoded building knowledge — it discovers sensor locations through the same protocol it uses to discover sensor capabilities. Add a new ESP32 node, and the agent finds it automatically.
 
