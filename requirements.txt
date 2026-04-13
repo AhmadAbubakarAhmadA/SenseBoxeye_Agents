@@ -1,0 +1,12 @@
+# SpatialSenseAgent — Python dependencies
+# Install: pip install -r requirements.txt
+
+# MQTT transport
+paho-mqtt>=2.1.0
+
+# LLM framework
+llama-index-core>=0.14.0
+llama-index-llms-anthropic>=0.11.0
+
+# Claude API (pulled by llama-index-llms-anthropic, pinned for direct use)
+anthropic>=0.91.0

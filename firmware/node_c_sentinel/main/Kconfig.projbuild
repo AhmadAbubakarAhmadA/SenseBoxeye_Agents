@@ -1,0 +1,40 @@
+menu "Node C configuration"
+
+    config NODE_C_WIFI_SSID
+        string "Wi-Fi SSID"
+        default "REPLACE_ME"
+
+    config NODE_C_WIFI_PASS
+        string "Wi-Fi password"
+        default "REPLACE_ME"
+
+    config NODE_C_MQTT_URI
+        string "MQTT broker URI"
+        default "mqtt://10.130.71.4:1883"
+
+    config NODE_C_MQTT_USER
+        string "MQTT username"
+        default "node_c"
+
+    config NODE_C_MQTT_PASS
+        string "MQTT password"
+        default ""
+
+    config NODE_C_SENSOR_ID
+        string "Sensor ID"
+        default "door_sentinel_01"
+
+    config NODE_C_VIBRATION_THRESHOLD
+        int "Vibration threshold (milli-g)"
+        default 250
+        help
+            Accelerometer deviation from 1g in milli-g above which a vibration
+            event is recorded. 250 = 0.25g. Tune after mounting on door frame.
+
+    config NODE_C_DEBOUNCE_MS
+        int "Vibration debounce (ms)"
+        default 500
+        help
+            Minimum time between consecutive vibration events in milliseconds.
+
+endmenu

@@ -1,64 +1,63 @@
-"""Spatial reasoning agent using Anthropic Claude with tool_use."""
+"""Spatial reasoning agent using LlamaIndex with Anthropic Claude."""
 
-import json
+import asyncio
 from pathlib import Path
 
-import anthropic
+from llama_index.core.agent import AgentWorkflow
+from llama_index.llms.anthropic import Anthropic
 
 from agent.config import ANTHROPIC_API_KEY, LLM_MODEL
 from agent.mqtt_reader import MQTTReader
-from agent.tools import TOOL_DEFINITIONS, handle_tool
+from agent.mcp_bridge import build_tools_from_manifests
 from agent.geojson_builder import snapshot_geojson
 
 _SYSTEM_PROMPT = (Path(__file__).resolve().parent / "prompts" / "spatial_analyst.txt").read_text()
 
 
 class SpatialAgent:
+    """LlamaIndex-based spatial reasoning agent with MCP-over-MQTT tool discovery."""
+
     def __init__(self, reader: MQTTReader):
         self.reader = reader
-        self.client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
-        self.model = LLM_MODEL
-        self.messages: list[dict] = []
+
+        # Build LLM
+        self.llm = Anthropic(
+            model=LLM_MODEL,
+            api_key=ANTHROPIC_API_KEY,
+            max_tokens=4096,
+            temperature=0.1,
+        )
+
+        # Discover tools from MQTT manifests → LlamaIndex FunctionTools
+        self.tools = build_tools_from_manifests(reader)
+        print(f"[agent] Loaded {len(self.tools)} tools into LlamaIndex agent.")
+
+        # Build the agent workflow
+        self.workflow = AgentWorkflow.from_tools_or_functions(
+            tools_or_functions=self.tools,
+            llm=self.llm,
+            system_prompt=_SYSTEM_PROMPT,
+            verbose=False,
+        )
 
     def reset(self):
-        self.messages = []
+        """Reset conversation state by rebuilding the workflow."""
+        self.workflow = AgentWorkflow.from_tools_or_functions(
+            tools_or_functions=self.tools,
+            llm=self.llm,
+            system_prompt=_SYSTEM_PROMPT,
+            verbose=False,
+        )
 
     def query(self, user_text: str) -> str:
-        """Send a user query, handle tool calls, return the final text response."""
-        self.messages.append({"role": "user", "content": user_text})
+        """Send a user query through the LlamaIndex agent and return the text response."""
+        result = asyncio.run(self.workflow.run(user_msg=user_text))
+        return str(result.response)
 
-        # Agentic loop: keep going while Claude wants to call tools
-        while True:
-            response = self.client.messages.create(
-                model=self.model,
-                max_tokens=2048,
-                system=_SYSTEM_PROMPT,
-                tools=TOOL_DEFINITIONS,
-                messages=self.messages,
-            )
-
-            # Collect assistant content blocks
-            assistant_content = response.content
-            self.messages.append({"role": "assistant", "content": assistant_content})
-
-            if response.stop_reason != "tool_use":
-                # Extract text blocks from the response
-                text_parts = [b.text for b in assistant_content if b.type == "text"]
-                return "\n".join(text_parts)
-
-            # Handle tool calls
-            tool_results = []
-            for block in assistant_content:
-                if block.type != "tool_use":
-                    continue
-                result = handle_tool(block.name, block.input, self.reader)
-                tool_results.append({
-                    "type": "tool_result",
-                    "tool_use_id": block.id,
-                    "content": result,
-                })
-
-            self.messages.append({"role": "user", "content": tool_results})
+    async def aquery(self, user_text: str) -> str:
+        """Async version of query."""
+        result = await self.workflow.run(user_msg=user_text)
+        return str(result.response)
 
     def geojson_snapshot(self) -> str:
         """Return a GeoJSON snapshot of all current readings."""

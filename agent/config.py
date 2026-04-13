@@ -25,7 +25,7 @@ TOPIC_MCP_PREFIX = "$mcp-rpc"          # $mcp-rpc/<client>/<server>/<name>
 
 # LLM
 ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")
-LLM_MODEL = os.getenv("LLM_MODEL", "claude-haiku-4-5-20251001")
+LLM_MODEL = os.getenv("LLM_MODEL", "claude-sonnet-4-5-20241022")
 
 # Paths
 PROJECT_ROOT = Path(__file__).resolve().parent.parent

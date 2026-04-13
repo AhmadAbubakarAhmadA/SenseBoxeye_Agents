@@ -8,7 +8,7 @@ from agent.spatial_agent import SpatialAgent
 
 
 def main():
-    print("SpatialSenseAgent starting...")
+    print("SpatialSenseAgent starting (LlamaIndex + MCP-over-MQTT)...")
 
     # 1. Connect to MQTT and wait for first reading
     reader = MQTTReader()
@@ -28,9 +28,20 @@ def main():
     if latest:
         sids = ", ".join(latest.keys())
         print(f"Receiving data from: {sids}")
+
+    # Give retained tool manifests a moment to arrive
+    for _ in range(10):
+        if reader.get_manifests():
+            break
+        time.sleep(0.2)
+    manifests = reader.get_manifests()
+    if manifests:
+        print(f"Discovered tool manifests from: {', '.join(manifests.keys())}")
+    else:
+        print("No tool manifests discovered — will use local fallback definitions.")
     print()
 
-    # 2. Start agent
+    # 2. Start LlamaIndex agent with discovered tools
     agent = SpatialAgent(reader)
 
     print("Ready. Ask questions about the indoor environment.")
